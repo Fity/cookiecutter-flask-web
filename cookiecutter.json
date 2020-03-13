@@ -1,0 +1,8 @@
+{
+  "project_name": "flask-web-app",
+  "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
+  "pkg_name": "{{ cookiecutter.project_slug|replace('-', '') }}",
+  "author_name": "Fity",
+  "author_email": "imfity@gmail.com",
+  "_copy_without_render": ["{{cookiecutter.pkg_name}}/templates/*.html"]
+}

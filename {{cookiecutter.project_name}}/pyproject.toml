@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "{{ cookiecutter.pkg_name }}"
+version = "0.1.0"
+description = ""
+authors = ["{{cookiecutter.author_name}} <{{cookiecutter.author_email}}>"]
+include = ["{{ cookiecutter.pkg_name }}/templates/", "{{ cookiecutter.pkg_name }}/static/"]
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "^1.0"
+pyjwt = "^1.7"
+flask_sqlalchemy = "^2.3"
+flask_migrate = "^2.3"
+mypy_extensions = "^0.4.1"
+python-dotenv = "^0.10.1"
+ipython = "^7.2"
+pyyaml = "^3.13"
+voluptuous = "^0.11.5"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^4.2"
+flake8 = "^3.6"
+mypy = "^0.720"
+fabric = "^2.4"
+sqlalchemy-stubs = "^0.3.0"
+ipdb = "^0.12.3"
+black = "^19.10b0"
+
+
+[tool.black]
+target-version = ['py37', 'py38']
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
+
+
