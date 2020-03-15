@@ -1,6 +1,6 @@
-# flask-starter-kit
+# {{cookiecutter.project_name}}
 
-init for an flask app with my opinioned understanding
+{{cookiecutter.project_description}}
 
 ### features
 
@@ -19,11 +19,12 @@ init for an flask app with my opinioned understanding
 
 ### running
 
-1. add APP_SETTINGS={your actual yaml config path} to your .env file, APP_SETTINGS=config.yaml is a good default choice.
+0. there is a sample .flaskenv for you. modity it according to your project.
+1. add APP_SETTINGS={your actual yaml config path} to your .env/.flaskenv file, APP_SETTINGS=config.yaml is a good default choice.
 
-2. add `FLASK_APP={{ cookiecutter.pkg_name }}.main:app` and `FLASK_DEBUG=1` to your .env file
+1. add `FLASK_APP={{ cookiecutter.pkg_name }}.main:app` and `FLASK_DEBUG=1` to your .env/.flaskenv file
 
-3. flask ishell
+1. flask ishell
 
 5) poetry run pytest tests
 

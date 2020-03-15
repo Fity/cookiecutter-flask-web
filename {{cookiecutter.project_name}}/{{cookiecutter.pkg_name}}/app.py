@@ -15,14 +15,16 @@ from werkzeug.utils import redirect
 def create_app(config=None):
     config = config or {}
     app = ApiFlask("{{ cookiecutter.pkg_name }}")
-    config_path = os.environ["APP_SETTINGS"]
-    with open(config_path) as f:
-        config.update(yaml.load(f))
+    app.config.from_object("{{cookiecutter.pkg_name}}.settings")
+    config_path = os.environ.get("APP_SETTINGS", "config.yml")
+    if os.path.exists(config_path):
+        with open(config_path) as f:
+            config.update(yaml.load(f, Loader=yaml.Loader))
     app.config.update(config)
 
     register_blueprints(app)
     db.init_app(app)
-    migrate.init_app(app)
+    migrate.init_app(app, db)
     init_shell(app)
 
     register_error_handlers(app)
