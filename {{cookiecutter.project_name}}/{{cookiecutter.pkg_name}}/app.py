@@ -1,15 +1,55 @@
 import importlib
+import inspect
+import itertools
 import os
 import yaml
 import logging
 import traceback
-from flask import request
+import pkgutil
 
-from .api import ApiException, ApiFlask
-from .globals import db, migrate
+from flask import request
 from werkzeug.exceptions import NotFound, MethodNotAllowed, BadRequest
 from werkzeug.routing import RequestRedirect
 from werkzeug.utils import redirect
+
+from .api import ApiException, ApiFlask
+from .globals import db, migrate
+
+
+def class_scanner(pkg, filter_=lambda _: True):
+    """
+    :param pkg: a module instance or name of the module
+    :param filter_: a function to filter matching classes
+    :return: all filtered class instances
+    """
+
+    def scan_pkg_file(pkg):
+        return {
+            cls[1]
+            for cls in inspect.getmembers(pkg, inspect.isclass)
+            if filter_(cls[1])
+        }
+
+    if isinstance(pkg, str):
+        pkg = importlib.import_module(pkg)
+    if not hasattr(pkg, "__path__"):
+        return scan_pkg_file(pkg)
+    classes = scan_pkg_file(pkg)
+    for _, modname, _ in pkgutil.iter_modules(pkg.__path__):
+        module = importlib.import_module("." + modname, pkg.__name__)
+        classes |= class_scanner(module, filter_)
+    return classes
+
+
+def scan_models():
+    from {{cookiecutter.pkg_name}}.globals import Model
+
+    models = {}
+    for exc_class in itertools.chain(
+        class_scanner("{{cookiecutter.pkg_name}}.models", lambda exc: issubclass(exc, Model))
+    ):
+        models[exc_class.__name__] = exc_class
+    return models
 
 
 def create_app(config=None):
@@ -94,7 +134,7 @@ def init_shell(app):
 
         main = importlib.import_module("__main__")
 
-        banner = f"App: poi"
+        banner = f"App: {{cookiecutter.pkg_name}}"
         from . import models
 
         ctx = main.__dict__
