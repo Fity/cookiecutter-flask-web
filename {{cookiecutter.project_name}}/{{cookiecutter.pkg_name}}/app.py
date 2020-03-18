@@ -63,6 +63,7 @@ def create_app(config=None):
     app.config.update(config)
 
     register_blueprints(app)
+    scan_models()
     db.init_app(app)
     migrate.init_app(app, db)
     init_shell(app)

@@ -1,13 +1,13 @@
 import functools
 
-from flask import Blueprint, g
+from flask import g
 
 from ..auth import check_auth, encode_jwt
-from ..api import dataschema
+from ..api import dataschema, ApiBlueprint
 from ..models import User
 from ..globals import current_user
 
-bp = Blueprint("{{ cookiecutter.pkg_name }}", __name__)
+bp = ApiBlueprint("{{ cookiecutter.pkg_name }}", __name__)
 
 
 @bp.route("/")

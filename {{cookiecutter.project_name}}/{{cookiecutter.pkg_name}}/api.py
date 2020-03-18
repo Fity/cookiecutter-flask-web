@@ -7,7 +7,7 @@ from typing import Optional, List
 from mypy_extensions import TypedDict
 
 from .cors import append_cors_header
-from voluptuous import Schema, Invalid
+from voluptuous import Schema, Invalid, REMOVE_EXTRA
 
 
 class ApiResult:
@@ -94,23 +94,52 @@ class ApiFlask(Flask):
         return response
 
 
-def dataschema(schema):
+class ApiBlueprint(Blueprint):
+    def post(self, rule, **options):
+        options.pop("methods", None)
+        return self.route(rule, methods=["POST"], **options)
+
+    def get(self, rule, **options):
+        options.pop("methods", None)
+        return self.route(rule, **options)
+
+    def put(self, rule, **options):
+        options.pop("methods", None)
+        return self.route(rule, methods=["PUT"], **options)
+
+    def delete(self, rule, **options):
+        options.pop("methods", None)
+        return self.route(rule, methods=["DELETE"], **options)
+
+    def patch(self, rule, **options):
+        options.pop("methods", None)
+        return self.route(rule, methods=["PATCH"], **options)
+
+
+def dataschema(schema, required=False, extra=REMOVE_EXTRA, source="json"):
+    if source == "args":
+        required = False
     if isinstance(schema, dict):
-        schema = Schema(schema)
+        schema = Schema(schema, required, extra)
 
     def decorator(f):
         @functools.wraps(f)
         def new_func(*args, **kwargs):
             try:
-                kwargs.update(schema(request.get_json()))
+                if source == "args":
+                    data = request.args.to_dict()
+                else:
+                    data = request.get_json(silent=True) or {}
+                kwargs.update(schema(data))
             except Invalid as e:
                 raise ApiException(
-                    'Invalid data: {} (path "{}")'.format(
-                        e.msg, "".join(str(path) for path in e.path)
-                    )
+                    "缺少入参字段:{}".format(".".join(str(path) for path in e.path))
                 )
             return f(*args, **kwargs)
 
         return new_func
 
     return decorator
+
+
+arg_dataschema = functools.partial(dataschema, source="args")
