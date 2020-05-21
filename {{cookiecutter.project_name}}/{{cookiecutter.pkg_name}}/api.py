@@ -1,6 +1,6 @@
 import functools
 
-from flask import Response, Flask, json, request
+from flask import Blueprint, Response, Flask, json, request
 from flask_sqlalchemy import Pagination
 from typing import Optional, List
 

@@ -10,7 +10,7 @@ import pkgutil
 from flask import request
 from werkzeug.exceptions import NotFound, MethodNotAllowed, BadRequest
 from werkzeug.routing import RequestRedirect
-from werkzeug.utils import redirect
+from werkzeug.utils import find_modules, redirect
 
 from .api import ApiException, ApiFlask
 from .globals import db, migrate
@@ -82,9 +82,9 @@ def create_normal_app():
 
 def register_blueprints(app):
     for name in find_modules("{{cookiecutter.pkg_name}}.apps", include_packages=True):
-    mod = importlib.import_module(name)
-    if hasattr(mod, "bp"):
-        app.register_blueprint(mod.bp)
+        mod = importlib.import_module(name)
+        if hasattr(mod, "bp"):
+            app.register_blueprint(mod.bp)
 
     @app.after_request
     def reset_session(response):
