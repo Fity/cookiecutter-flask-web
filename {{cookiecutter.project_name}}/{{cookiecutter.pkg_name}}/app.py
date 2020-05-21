@@ -81,12 +81,20 @@ def create_normal_app():
 
 
 def register_blueprints(app):
-    from .apps.admin import bp as admin
+    for name in find_modules("{{cookiecutter.pkg_name}}.apps", include_packages=True):
+    mod = importlib.import_module(name)
+    if hasattr(mod, "bp"):
+        app.register_blueprint(mod.bp)
 
-    app.register_blueprint(admin)
-    from .apps.user import bp as user
+    @app.after_request
+    def reset_session(response):
+        from .globals import session
 
-    app.register_blueprint(user)
+        try:
+            session.rollback()
+        except BaseException:
+            pass
+        return response
 
 
 def register_error_handlers(app):
