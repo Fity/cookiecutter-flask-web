@@ -1,3 +1,6 @@
+import dataclasses
+import datetime
+from enum import Enum
 import functools
 
 from flask import Blueprint, Response, Flask, json, request
@@ -10,6 +13,25 @@ from .cors import append_cors_header
 from voluptuous import Schema, Invalid, REMOVE_EXTRA
 
 
+class JsonEncoder(json.JSONEncoder):
+    def default(self, o):
+        from .globals import db
+
+        if isinstance(o, db.Model):
+            return o.as_dict()
+        if isinstance(o, datetime.datetime):
+            return o.strftime("%Y-%m-%d %H:%M:%S")
+        if isinstance(o, datetime.date):
+            return o.strftime("%Y-%m-%d")
+        if isinstance(o, datetime.time):
+            return o.strftime("%H:%M:%S")
+        if isinstance(o, Enum):
+            return o.value
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
+        return super().default(o)
+
+
 class ApiResult:
     def __init__(self, value, status=200, next_page=None):
         self.value = value
@@ -18,7 +40,7 @@ class ApiResult:
 
     def to_response(self):
         return Response(
-            json.dumps(self.value, ensure_ascii=False),
+            json.dumps(self.value, ensure_ascii=False, cls=JsonEncoder),
             status=self.status,
             mimetype="application/json",
         )
@@ -66,6 +88,11 @@ class InvalidToken(ApiException):
 
 class AuthExpired(ApiException):
     pass
+
+
+class InvalidInput(ApiException):
+    status = 400
+    message = 'Invalid User Input'
 
 
 class ApiFlask(Flask):
