@@ -39,4 +39,5 @@ def append_cors_header(response):
     else:
         # for actual request but not preflight
         # e.g: response.headers.add('Access-Control-Expose-Headers', '')
-        return
+        ...
+    return response
