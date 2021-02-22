@@ -35,8 +35,8 @@ def auth_callback(payload):
 
 
 def login_required(fn):
-    functools.wraps(fn)
-
+    
+    @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         check_auth("AUD_APP", auth_callback)
         return fn(*args, **kwargs)

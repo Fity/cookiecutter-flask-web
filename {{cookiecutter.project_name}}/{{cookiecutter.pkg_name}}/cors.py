@@ -1,7 +1,7 @@
 from flask import current_app, request
 
 ALLOWED_HEADERS = (
-    'Authorization,'
+    'Authorization',
     'Content-Type', 'If-Match', 'If-Modified-Since', 'If-None-Match',
     'If-Unmodified-Since', 'Range', 'X-Requested-With'
 )
