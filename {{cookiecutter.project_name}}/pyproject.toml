@@ -1,52 +1,36 @@
-[tool.poetry]
+[project]
 name = "{{ cookiecutter.pkg_name }}"
 version = "0.1.0"
 description = ""
-authors = ["{{cookiecutter.author_name}} <{{cookiecutter.author_email}}>"]
-include = ["{{ cookiecutter.pkg_name }}/templates/", "{{ cookiecutter.pkg_name }}/static/"]
+authors = [{name = "{{cookiecutter.author_name}}", email = "{{cookiecutter.author_email}}"}]
+dependencies = [
+    "flask>=3.0.3",
+    "pyjwt>=2.8.0",
+    "flask-sqlalchemy>=3.1.1",
+    "flask-migrate>=4.0.7",
+    "mypy-extensions>=1.0.0",
+    "python-dotenv>=1.0.1",
+    "pyyaml>=6.0.1",
+    "voluptuous>=0.15.0",
+    "pymysql>=1.1.1",
+    "ipython>=8.25.0",
+]
+requires-python = ">=3.12"
+readme = "README.md"
 
-
-[tool.poetry.dependencies]
-python = "^3.8"
-flask = "^1.0"
-pyjwt = "^1.7"
-flask_sqlalchemy = "^2.3"
-flask_migrate = "^2.3"
-mypy_extensions = "^0.4.1"
-python-dotenv = "^0.10.1"
-ipython = "^7.2"
-pyyaml = '^5.3.1'
-voluptuous = "^0.11.5"
-pymysql = "^0.9.3"
-
-
-[tool.poetry.dev-dependencies]
-pytest = "^4.2"
-flake8 = "^3.6"
-mypy = "^0.720"
-fabric = "^2.4"
-sqlalchemy-stubs = "^0.3.0"
-ipdb = "^0.12.3"
-black = "^19.10b0"
-
-
-[tool.black]
-target-version = ['py37', 'py38']
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
 [build-system]
-requires = ["poetry>=1.0.0"]
-build-backend = "poetry.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "ipdb>=0.13.13",
+]
+
+[tool.pdm.scripts]
+start = "flask run -p 4000"
+ishell = "flask ishell"

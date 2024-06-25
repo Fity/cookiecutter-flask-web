@@ -2,9 +2,10 @@ import dataclasses
 import datetime
 from enum import Enum
 import functools
+import json
 
-from flask import Blueprint, Response, Flask, json, request
-from flask_sqlalchemy import Pagination
+from flask import Blueprint, Response, Flask, request
+from flask_sqlalchemy.pagination import Pagination
 from typing import Optional, List
 
 from mypy_extensions import TypedDict
