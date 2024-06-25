@@ -2,20 +2,21 @@ import datetime
 from types import GeneratorType
 from typing import List, Any, Optional, TypeVar, Type, Dict, Tuple, cast
 
-import flask_sqlalchemy
 from sqlalchemy.orm import load_only
 
 
 from sqlalchemy import desc, Column, DateTime, ForeignKey, Integer, inspect
 from sqlalchemy.ext.declarative import declared_attr
-from flask_sqlalchemy import Pagination
+from flask_sqlalchemy.pagination import Pagination
+from flask_sqlalchemy.model import Model
+from flask_sqlalchemy.query import Query as BaseQuery
 from .api import NotFound
 
 
 T = TypeVar("T", bound="ModelClass")
 
 
-class ModelClass(flask_sqlalchemy.Model):
+class ModelClass(Model):
     query: "Query"
     EXCLUDED_FIELDS: Tuple[str] = cast(Tuple[str], ())
 
@@ -158,7 +159,7 @@ class ModelClass(flask_sqlalchemy.Model):
         return cls.query.get_or_404(*args, **kwargs)  # type: ignore
 
 
-class Query(flask_sqlalchemy.BaseQuery):
+class Query(BaseQuery):
     def paginate(
         self, page=None, per_page=None, error_out=False, max_per_page=None
     ) -> Pagination:
